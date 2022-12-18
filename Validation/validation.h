@@ -2,7 +2,8 @@
 #define VALIDATION_H
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int validation(int numberArguments, char **arguments);
+FILE* validation(int numberArguments, char **arguments);
 
 #endif
