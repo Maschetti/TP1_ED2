@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "../tad.h"
+#include "../Tad/tad.h"
 
 void criaAscendente() {
   FILE *arquivo = fopen("ascendente.bin", "wb");
