@@ -91,6 +91,7 @@ void criaAleatorio() {
       fwrite(&registro, sizeof(Registro), 1, arquivo);
     }
     
+    free(vetor);
     fclose(arquivo);
   }
   else {
