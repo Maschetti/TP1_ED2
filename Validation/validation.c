@@ -8,7 +8,7 @@ void argumentsToInt(int numberArguments, char** arguments, int *metodo, int *qua
   *chave = atoi(arguments[4]);
 
   if(numberArguments == 6) {
-    if(strcmp(arguments[5], "-P")) {
+    if(strcmp(arguments[5], "-P") == 0) {
       *P = 1;
     }
   }
