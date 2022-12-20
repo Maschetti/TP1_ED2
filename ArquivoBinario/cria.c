@@ -3,6 +3,15 @@
 #include <time.h>
 #include "../Tad/tad.h"
 
+// como executar:
+// gcc ArquivoBinario/cria.c -o cria -Wall
+// ./cria int
+// 
+// int faz referencia a ordem do arquivo:
+// (1) ascendente
+// (2) descendente
+// (3) aleatorio
+
 void criaAscendente() {
   FILE *arquivo = fopen("ascendente.bin", "wb");
 
