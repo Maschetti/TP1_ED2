@@ -8,6 +8,11 @@ typedef struct {
   char dado2[5000];
 } Registro;
 
+typedef struct {
+  int chave;
+  int posicaoArquivo;
+} Indice;
+
 void imprimeRegistro(Registro registro);
 
 #endif
