@@ -1,4 +1,4 @@
-#include "ArquivoBinario.h"
+#include "arquivoBinario.h"
 
 void imprimeArquivo(FILE* arquivo, int tamanho) {
   Registro registro;
