@@ -1,4 +1,5 @@
 #include "AcessoSequencialIndexado/acessoSequencialIndexado.h"
+#include "ArvoreBinaria/arvoreBinario.h"
 #include "Validation/validation.h"
 
 int main(int argc, char **argv) {
@@ -11,6 +12,8 @@ int main(int argc, char **argv) {
 
     if(metodo == 1) {
       acessoSequencialIndexado(arquivo, tamanhoArquivo, &registroPesquisa);
+    } else if(metodo == 2) {
+      arvoreBinaria(arquivo, tamanhoArquivo, &registroPesquisa);
     }
 
     imprimeRegistro(registroPesquisa);
