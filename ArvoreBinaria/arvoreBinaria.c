@@ -1,5 +1,17 @@
 #include "arvoreBinario.h"
 
+void imprimeArvore(int tamanhoArvore) {
+  ArvoreExterna auxiliar;
+  FILE *arvore = fopen("arvoreBinaria.bin", "rb");
+  fseek(arvore, 0, SEEK_SET);
+
+  for(int i = 0; i < tamanhoArvore; i++) {
+    fread(&auxiliar, sizeof(ArvoreExterna), 1, arvore);
+    printf("%d, %d, %d\n", auxiliar.indice.chave, auxiliar.filhoEsquerda, auxiliar.filhoDireita);
+  }
+  fclose(arvore);
+};
+
 int insereArvoreBinaria(FILE *arvore, Indice index) {
   
   ArvoreExterna auxiliar;
@@ -50,23 +62,24 @@ int insereArvoreBinaria(FILE *arvore, Indice index) {
   return 1;
 };
 
-void procuraArvoreBinaria(FILE *arvore, int chave, Indice *index) {
+void procuraArvoreBinaria(FILE *arvore, int chave, Indice *index, int *achou) {
   ArvoreExterna folha;
   fread(&folha, sizeof(ArvoreExterna), 1, arvore);
 
   if(folha.indice.chave == chave) {
     *index = folha.indice;
+    *achou = 1;
     return ;
   }
 
   if(chave < folha.indice.chave && folha.filhoEsquerda != -1) {
     fseek(arvore, folha.filhoEsquerda * sizeof(ArvoreExterna), SEEK_SET);
-    procuraArvoreBinaria(arvore, chave, index);
+    procuraArvoreBinaria(arvore, chave, index, achou);
   }
 
   if(chave > folha.indice.chave && folha.filhoDireita != -1) {
     fseek(arvore, folha.filhoDireita * sizeof(ArvoreExterna), SEEK_SET);
-    procuraArvoreBinaria(arvore, chave, index);
+    procuraArvoreBinaria(arvore, chave, index, achou);
   }
 
   return ;
@@ -90,11 +103,14 @@ void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa
       }
     }
 
+    int achou = 0;
     fseek(arvore, 0, SEEK_SET);
-    procuraArvoreBinaria(arvore, registroPesquisa->chave, &index);
+    procuraArvoreBinaria(arvore, registroPesquisa->chave, &index, &achou);
 
-    fseek(arquivo, index.posicaoArquivo * sizeof(Registro), SEEK_SET);
-    fread(registroPesquisa, sizeof(Registro), 1, arquivo);
+    if(achou == 1) {
+      fseek(arquivo, index.posicaoArquivo * sizeof(Registro), SEEK_SET);
+      fread(registroPesquisa, sizeof(Registro), 1, arquivo);
+    }
 
     fclose(arvore);
   }
