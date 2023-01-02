@@ -1,5 +1,6 @@
 #include "AcessoSequencialIndexado/acessoSequencialIndexado.h"
 #include "ArvoreBinaria/arvoreBinario.h"
+#include "ArvoreB/arvoreB.h"
 #include "Validation/validation.h"
 
 int main(int argc, char **argv) {
@@ -15,6 +16,10 @@ int main(int argc, char **argv) {
     } else if(metodo == 2) {
       arvoreBinaria(arquivo, tamanhoArquivo, &registroPesquisa);
     }
+    else if (metodo == 3) {
+      arvoreB(arquivo, tamanhoArquivo, &registroPesquisa);
+    }
+    
 
     imprimeRegistro(registroPesquisa);
   }
