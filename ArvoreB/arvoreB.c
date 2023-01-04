@@ -1,3 +1,4 @@
+/*
 #include "arvoreB.h"
 
 void pesquisaArvoreB() {
@@ -47,3 +48,4 @@ void arvoreB(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
   
   return ;
 }
+*/
