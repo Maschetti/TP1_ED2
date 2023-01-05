@@ -9,7 +9,7 @@
 typedef struct Pagina *Apontador;
 
 typedef struct Pagina {
-  short n;
+  short numeroItems;
   Indice items[2 * M];
   Apontador paginasFilhas[2 * M + 1];
 } Pagina;
