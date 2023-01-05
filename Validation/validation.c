@@ -1,5 +1,5 @@
 #include "validation.h"
-#include "../ArquivoBinario/arquivoBinario.h"
+#include "../ArquivoBinario/ArquivoBinario.h"
 
 void argumentsToInt(int numberArguments, char** arguments, int *metodo, int *quantidade, int *situacao, int *chave, int *P) {
   *metodo = atoi(arguments[1]);

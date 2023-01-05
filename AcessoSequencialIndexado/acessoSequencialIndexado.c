@@ -2,14 +2,14 @@
 #include "../Analises/analise.h"
 #include <stdlib.h>
 
-Analise *analise = malloc(sizeof(Analise));
+Analise analise;
 
 void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroPesquisa) {
   Registro pagina[TAMANHOPAGINA];
 
   int i, quantidadeItems;
   long desloc;
-  iniciaContagemTempo(analise);
+  iniciaContagemTempo(&analise);
   i = 0;
   while (i < tamanhoTabela && tabela[i] <= registroPesquisa->chave) i++;
 
@@ -24,22 +24,22 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   desloc = (i - 1) * TAMANHOPAGINA * sizeof(Registro);
   fseek(arquivo, desloc, SEEK_SET);
   fread(&pagina, sizeof(Registro), quantidadeItems, arquivo);
-  atualizaTransferencias_pesquisa(analise, quantidadeItems);
+  atualizaTransferencias_pesquisa(&analise, quantidadeItems);
 
   for(i = 0; i < quantidadeItems; i++) {
     if(pagina[i].chave == registroPesquisa->chave) {
       *registroPesquisa = pagina[i];
-      atualizaComparacoes_pesquisa(analise, 1);
+      atualizaComparacoes_pesquisa(&analise, 1);
     }
   }
-  finalizaContagemTempo(analise);
-  atualizaTempo_pesquisa(analise);
+  finalizaContagemTempo(&analise);
+  atualizaTempo_pesquisa(&analise);
 
   return ;
 }
 
 void acessoSequencialIndexado(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
-  iniciaContagemTempo(analise);
+  iniciaContagemTempo(&analise);
   int tamanhoTabela = tamanhoArquivo / TAMANHOPAGINA;
   if(tamanhoTabela < ((double) tamanhoArquivo / (double) TAMANHOPAGINA)) {
     tamanhoTabela++;
@@ -54,14 +54,14 @@ void acessoSequencialIndexado(FILE *arquivo, int tamanhoArquivo, Registro *regis
     tabela[posicao] = registro.chave;
     posicao++;
     //Atualiza Transferências antes 
-    atualizaTransferencias_criacao(analise, 1);
+    atualizaTransferencias_criacao(&analise, 1);
   }
   fflush(stdout);
-  finalizaContagemTempo(analise);
-  atualizaTempo_criacao(analise);
+  finalizaContagemTempo(&analise);
+  atualizaTempo_criacao(&analise);
   pesquisa(arquivo, tabela, tamanhoTabela, registroPesquisa);
 
   free(tabela);
-  imprimirDados(analise);
+  imprimirDados(&analise);
   return ;
 }
