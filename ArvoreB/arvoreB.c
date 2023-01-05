@@ -4,12 +4,28 @@ void pesquisaArvoreB() {
 
 }
 
-void insereIndice(Indice item, Apontador arvore, int *cresceu, Indice *indiceRetorno, Apontador *paginaRetorno) {
+void insereIndice(Apontador paginaAtual, Indice item, int *cresceu, Indice *indiceRetorno, Apontador *paginaRetorno) {
   int i = 1, j;
+  Apontador auxiliar;
 
-  if(arvore == NULL) {
-    
+  if(paginaAtual == NULL) {
+    *cresceu = 1;
+    *indiceRetorno = item;
+    *paginaRetorno = NULL;
+
+    return ;
   }
+
+  while(i < paginaAtual->items && item.chave > paginaAtual->items->chave) i++;
+
+  if(item.chave == paginaAtual->items[i - 1].chave) {
+    *cresceu = 0;
+    printf("ERRO: o item ja esta presente na arvore\n");
+
+    return ;
+  }
+
+  return ;
 }
 
 void insereArvoreB(Apontador *arvore, Indice item) {
@@ -17,11 +33,11 @@ void insereArvoreB(Apontador *arvore, Indice item) {
   Indice indiceRetorno;
   Pagina *paginaRetorno, *paginaAuxiliar;
   
-  insereIndice();
+  insereIndice(*arvore, item, &cresceu, &indiceRetorno, &paginaRetorno);
 
   if(cresceu) {
     paginaAuxiliar = malloc(sizeof(Pagina*));
-    paginaAuxiliar->n = 1;
+    paginaAuxiliar->numeroItems = 1;
     paginaAuxiliar->items[0] = indiceRetorno;
     paginaAuxiliar->paginasFilhas[1] = paginaRetorno;
     paginaAuxiliar->paginasFilhas[0] = *arvore;
