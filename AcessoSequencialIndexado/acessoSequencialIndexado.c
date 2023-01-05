@@ -24,12 +24,13 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   desloc = (i - 1) * TAMANHOPAGINA * sizeof(Registro);
   fseek(arquivo, desloc, SEEK_SET);
   fread(&pagina, sizeof(Registro), quantidadeItems, arquivo);
-  atualizaTransferencias_pesquisa(&analise, quantidadeItems);
+  atualizaTransferencias_pesquisa(&analise, 1);
 
   for(i = 0; i < quantidadeItems; i++) {
     if(pagina[i].chave == registroPesquisa->chave) {
       *registroPesquisa = pagina[i];
       atualizaComparacoes_pesquisa(&analise, 1);
+      break;
     }
   }
   finalizaContagemTempo(&analise);
