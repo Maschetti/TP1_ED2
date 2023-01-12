@@ -19,7 +19,6 @@ int main(int argc, char **argv) {
     else if (metodo == 3) {
       arvoreB(arquivo, tamanhoArquivo, &registroPesquisa);
     }
-    
 
     imprimeRegistro(registroPesquisa);
   }
@@ -27,6 +26,9 @@ int main(int argc, char **argv) {
     printf("ERRO: nao foi possivel abrir o arquivo\n");
   }
 
-  fclose(arquivo);
+  if(arquivo != NULL) {
+    fclose(arquivo);
+  }
+  
   return 1;
 }
