@@ -17,6 +17,7 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   if(i < tamanhoTabela) quantidadeItems = TAMANHOPAGINA;
   else {
     fseek(arquivo, 0, SEEK_END);
+    atualizaTransferencias_pesquisa(&analise, 1);
     quantidadeItems = ((ftell(arquivo) / sizeof(Registro)) - 1) % TAMANHOPAGINA;
     if(quantidadeItems == 0) quantidadeItems = 4;
   }
@@ -24,7 +25,7 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   desloc = (i - 1) * TAMANHOPAGINA * sizeof(Registro);
   fseek(arquivo, desloc, SEEK_SET);
   fread(&pagina, sizeof(Registro), quantidadeItems, arquivo);
-  atualizaTransferencias_pesquisa(&analise, 1);
+  atualizaTransferencias_pesquisa(&analise, 2);
 
   for(i = 0; i < quantidadeItems; i++) {
     if(pagina[i].chave == registroPesquisa->chave) {
@@ -55,7 +56,7 @@ void acessoSequencialIndexado(FILE *arquivo, int tamanhoArquivo, Registro *regis
     tabela[posicao] = registro.chave;
     posicao++;
     //Atualiza Transferências antes 
-    atualizaTransferencias_criacao(&analise, 1);
+    atualizaTransferencias_criacao(&analise, 2);
   }
   fflush(stdout);
   finalizaContagemTempo(&analise);
