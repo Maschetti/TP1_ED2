@@ -1,3 +1,4 @@
+/*
 #include "arvoreB.h"
 
 void pesquisaArvoreB(Apontador paginaAtual, Indice *itemPesquisa, int *achou) {
@@ -151,3 +152,4 @@ void arvoreB(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
 
   return ;
 }
+*/
