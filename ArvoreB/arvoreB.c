@@ -1,13 +1,53 @@
 #include "arvoreB.h"
 
-void pesquisaArvoreB() {
+void pesquisaArvoreB(Apontador paginaAtual, Indice *itemPesquisa, int *achou) {
+  long i = 1;
+  
+  if(paginaAtual == NULL) {
+    return ;
+  }
 
+  while (i < paginaAtual->numeroItems && itemPesquisa->chave > paginaAtual->items[i - 1].chave) i++;
+
+  if(itemPesquisa->chave == paginaAtual->items[i - 1].chave) {
+    *itemPesquisa = paginaAtual->items[i - 1];
+    *achou = 1;
+    return  ;
+  }
+
+  if(itemPesquisa->chave < paginaAtual->items[i - 1].chave) {
+    pesquisaArvoreB(paginaAtual->paginasFilhas[i - 1], itemPesquisa, achou);
+  }
+  else {
+    pesquisaArvoreB(paginaAtual->paginasFilhas[i], itemPesquisa, achou);
+  }
+
+  return ;
 }
 
 void insereNaPagina(Apontador paginaAtual, Indice item, Apontador paginaDireita) {
   int naoAchouPosicao, k;
-  k = paginaAtual->items;
+  k = paginaAtual->numeroItems;
   naoAchouPosicao = (k > 0) ? 1 : 0;
+
+  while (naoAchouPosicao) {
+    if(item.chave >= paginaAtual->items[k - 1].chave) {
+      naoAchouPosicao = 0;
+      break;
+    }
+
+    paginaAtual->items[k] = paginaAtual->items[k - 1];
+    paginaAtual->paginasFilhas[k + 1] = paginaAtual->paginasFilhas[k];
+    k--;
+
+    if(k < 1) {
+      naoAchouPosicao = 0;
+    }
+  }
+
+  paginaAtual->items[k] = item;
+  paginaAtual->paginasFilhas[k + 1] = paginaDireita;
+  paginaAtual->numeroItems++;
 }
 
 void insereIndice(Apontador paginaAtual, Indice item, int *cresceu, Indice *indiceRetorno, Apontador *paginaRetorno) {
@@ -22,7 +62,7 @@ void insereIndice(Apontador paginaAtual, Indice item, int *cresceu, Indice *indi
     return ;
   }
 
-  while(i < paginaAtual->numeroItems && item.chave > paginaAtual->items[i].chave) i++;
+  while(i < paginaAtual->numeroItems && item.chave > paginaAtual->items[i - 1].chave) i++;
 
   if(item.chave == paginaAtual->items[i - 1].chave) {
     *cresceu = 0;
@@ -31,7 +71,7 @@ void insereIndice(Apontador paginaAtual, Indice item, int *cresceu, Indice *indi
     return ;
   }
 
-  if(item.chave < paginaAtual->items[i].chave) i--;
+  if(item.chave < paginaAtual->items[i - 1].chave) i--;
 
   insereIndice(paginaAtual->paginasFilhas[i], item, cresceu, indiceRetorno, paginaRetorno);
 
@@ -40,9 +80,10 @@ void insereIndice(Apontador paginaAtual, Indice item, int *cresceu, Indice *indi
   if(paginaAtual->numeroItems < 2 * M) {
     insereNaPagina(paginaAtual, *indiceRetorno, *paginaRetorno);
     *cresceu = 0;
+    return ;
   }
 
-  paginaAuxiliar = malloc(sizeof(Apontador));
+  paginaAuxiliar = (Apontador) malloc(sizeof(Pagina));
   paginaAuxiliar->numeroItems = 0;
   paginaAuxiliar->paginasFilhas[0] = NULL;
 
@@ -55,6 +96,15 @@ void insereIndice(Apontador paginaAtual, Indice item, int *cresceu, Indice *indi
     insereNaPagina(paginaAuxiliar, *indiceRetorno, *paginaRetorno);
   }
 
+  for (j = M + 2; j <= 2 * M; j++) { 
+    insereNaPagina(paginaAuxiliar, paginaAtual->items[j - 1], paginaAtual->paginasFilhas[j]);
+  }
+
+  paginaAtual->numeroItems = M;
+  paginaAuxiliar->paginasFilhas[0] = paginaAtual->paginasFilhas[M + 1];
+  *indiceRetorno = paginaAtual->items[M];
+  *paginaRetorno = paginaAuxiliar;
+
   return ;
 } 
 
@@ -66,7 +116,7 @@ void insereNaArvoreB(Apontador *paginaRaiz, Indice item) {
   insereIndice(*paginaRaiz, item, &cresceu, &indiceRetorno, &paginaRetorno);
 
   if(cresceu) {
-    paginaAuxiliar = malloc(sizeof(Pagina*));
+    paginaAuxiliar = (Pagina *) malloc(sizeof(Pagina));
     paginaAuxiliar->numeroItems = 1;
     paginaAuxiliar->items[0] = indiceRetorno;
     paginaAuxiliar->paginasFilhas[1] = paginaRetorno;
@@ -86,10 +136,18 @@ void arvoreB(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
     fread(&auxiliar, sizeof(Registro), 1, arquivo);
     item.chave = auxiliar.chave;
     item.posicaoArquivo = i;
-    insereArvoreB(&paginaRaiz, item);
+    insereNaArvoreB(&paginaRaiz, item);
   }
 
-  pesquisaArvoreB();
+  item.chave = registroPesquisa->chave;
   
+  int achou;
+  pesquisaArvoreB(paginaRaiz, &item, &achou);
+  
+  if(achou) {
+    fseek(arquivo, item.posicaoArquivo * sizeof(Registro), SEEK_SET);
+    fread(registroPesquisa, sizeof(Registro), 1, arquivo);
+  }
+
   return ;
 }
