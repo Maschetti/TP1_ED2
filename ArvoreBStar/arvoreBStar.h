@@ -9,8 +9,8 @@ typedef enum { Interna, Externa } IntExt;
 
 typedef struct Pagina *Apontador;
 
-typedef struct {
-  IntExt tipoPagina;
+typedef struct Pagina {
+  IntExt tipoDaPagina;
 
   union {
     struct {
