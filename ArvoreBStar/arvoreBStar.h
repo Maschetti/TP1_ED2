@@ -5,25 +5,27 @@
 
 #define M 4
 
-typedef enum { Interna, Externa } IntExt;
+typedef enum { INTERNA, EXTERNA } IntExt;
 
-typedef struct Pagina *Apontador;
+typedef struct PaginaStar *ApontadorStar;
 
-typedef struct Pagina {
+typedef struct PaginaStar {
   IntExt tipoDaPagina;
 
   union {
     struct {
-      int numeroIndices;
+      int numeroChaves;
       int chaves[2 * M];
-      Apontador paginasFilhas[2 * M + 1];
-    } U0;
+      ApontadorStar paginasFilhas[2 * M + 1];
+    } interna;
     
     struct {
       int numeroIndices;
       Indice indices[2 * M];
-    } U1;
+    } externa;
   } UU;
-} Pagina;
+} PaginaStar;
+
+void arvoreBStar(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa);
 
 #endif
