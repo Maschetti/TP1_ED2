@@ -3,6 +3,7 @@
 #include "ArvoreB/arvoreB.h"
 #include "ArvoreBStar/arvoreBStar.h"
 #include "Validation/validation.h"
+#include "Analises/analise.h"
 
 int main(int argc, char **argv) {
   FILE* arquivo;
@@ -18,7 +19,7 @@ int main(int argc, char **argv) {
       arvoreBinaria(arquivo, tamanhoArquivo, &registroPesquisa);
     }
     else if (metodo == 3) {
-      arvoreB(arquivo, tamanhoArquivo, &registroPesquisa);
+      //arvoreB(arquivo, tamanhoArquivo, &registroPesquisa);
     }
     else {
       arvoreBStar(arquivo, tamanhoArquivo, &registroPesquisa);
