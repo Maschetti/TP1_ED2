@@ -5,7 +5,9 @@
 
 //a analise eh dormado por numero de transferencias, comparacoes e o tempo
 typedef struct{
+  
   int tranferencias_criacao, tranferencias_pesquisa;
+  int deslocamentos_criacao, deslocamentos_pesquisa;
   int comparacoes_criacao, comparacoes_pesquisa;
   double tempo_pesquisa, tempo_criacao;
 
@@ -30,6 +32,10 @@ void atualizaTransferencias_pesquisa(Analise *analise, int qtd);
 //funcoes para numero de comparacoes
 void atualizaComparacoes_criacao(Analise *analise, int qtd);
 void atualizaComparacoes_pesquisa(Analise *analise, int qtd);
+
+//funcoes para numero de deslocamentos
+void atualizaDeslocamentos_criacao(Analise *analise, int qtd);
+void atualizaDeslocamentos_pesquisa(Analise *analise, int qtd);
 
 //funcoes para atualizacao do tempo de contagem
 void atualizaTempo_criacao(Analise *analise);
