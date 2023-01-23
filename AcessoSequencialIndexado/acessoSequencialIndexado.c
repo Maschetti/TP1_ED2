@@ -17,20 +17,21 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   if(i < tamanhoTabela) quantidadeItems = TAMANHOPAGINA;
   else {
     fseek(arquivo, 0, SEEK_END);
-    atualizaTransferencias_pesquisa(&analise, 1);
+    atualizaDeslocamentos_pesquisa(&analise, 1);
     quantidadeItems = ((ftell(arquivo) / sizeof(Registro)) - 1) % TAMANHOPAGINA;
     if(quantidadeItems == 0) quantidadeItems = 4;
   }
 
   desloc = (i - 1) * TAMANHOPAGINA * sizeof(Registro);
   fseek(arquivo, desloc, SEEK_SET);
+  atualizaDeslocamentos_pesquisa(&analise, 1);
   fread(&pagina, sizeof(Registro), quantidadeItems, arquivo);
-  atualizaTransferencias_pesquisa(&analise, 2);
+  atualizaTransferencias_pesquisa(&analise, 1);
 
   for(i = 0; i < quantidadeItems; i++) {
+    atualizaComparacoes_pesquisa(&analise, 1);
     if(pagina[i].chave == registroPesquisa->chave) {
-      *registroPesquisa = pagina[i];
-      atualizaComparacoes_pesquisa(&analise, 1);
+      *registroPesquisa = pagina[i];   
       break;
     }
   }
@@ -41,6 +42,7 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
 }
 
 void acessoSequencialIndexado(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
+  iniciaAnalise(&analise);
   iniciaContagemTempo(&analise);
   int tamanhoTabela = tamanhoArquivo / TAMANHOPAGINA;
   if(tamanhoTabela < ((double) tamanhoArquivo / (double) TAMANHOPAGINA)) {
@@ -52,11 +54,14 @@ void acessoSequencialIndexado(FILE *arquivo, int tamanhoArquivo, Registro *regis
   Registro registro;
   while (posicao < tamanhoTabela) {
     fread(&registro, sizeof(registro), 1, arquivo);
+    atualizaTransferencias_criacao(&analise, 1);
+
     fseek(arquivo, (sizeof(registro) * (TAMANHOPAGINA - 1)), SEEK_CUR);
+    atualizaDeslocamentos_criacao(&analise, 1);    
+
     tabela[posicao] = registro.chave;
     posicao++;
-    //Atualiza Transferências antes 
-    atualizaTransferencias_criacao(&analise, 2);
+    
   }
   fflush(stdout);
   finalizaContagemTempo(&analise);
