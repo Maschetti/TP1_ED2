@@ -99,7 +99,7 @@ void insereIndiceStar(ApontadorStar paginaAtual, Indice indiceInserir, int *cres
     if(!*cresceu);
 
     if(paginaAtual->UU.interna.numeroChaves < 2 * M) {
-      // insereNaPaginaStar();
+      insereNaPaginaStar(paginaAtual, *indiceRetorno, *paginaRetorno);
       *cresceu = 0;
 
       return ;
