@@ -1,6 +1,6 @@
 #include "acessoSequencialIndexado.h"
 
-void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroPesquisa) {
+void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroPesquisa, int tamanhoArquivo) {
   Registro pagina[TAMANHOPAGINA];
   int i, quantidadeItems;
   long desloc;
@@ -12,8 +12,8 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   if(i < tamanhoTabela) quantidadeItems = TAMANHOPAGINA;
   else {
     fseek(arquivo, 0, SEEK_END);
-    quantidadeItems = ((ftell(arquivo) / sizeof(Registro)) - 1) % TAMANHOPAGINA;
-    if(quantidadeItems == 0) quantidadeItems = 4;
+    quantidadeItems = tamanhoArquivo % TAMANHOPAGINA;
+    if(quantidadeItems == 0) quantidadeItems = TAMANHOPAGINA;
   }
 
   desloc = (i - 1) * TAMANHOPAGINA * sizeof(Registro);
@@ -47,7 +47,7 @@ void acessoSequencialIndexado(FILE *arquivo, int tamanhoArquivo, Registro *regis
   }
   fflush(stdout);
 
-  pesquisa(arquivo, tabela, tamanhoTabela, registroPesquisa);
+  pesquisa(arquivo, tabela, tamanhoTabela, registroPesquisa, tamanhoArquivo);
 
   free(tabela);
 
