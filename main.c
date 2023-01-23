@@ -1,6 +1,7 @@
 #include "AcessoSequencialIndexado/acessoSequencialIndexado.h"
 #include "ArvoreBinaria/arvoreBinario.h"
 #include "ArvoreB/arvoreB.h"
+#include "ArvoreBStar/arvoreBStar.h"
 #include "Validation/validation.h"
 #include "Analises/analise.h"
 
@@ -20,15 +21,16 @@ int main(int argc, char **argv) {
     else if (metodo == 3) {
       //arvoreB(arquivo, tamanhoArquivo, &registroPesquisa);
     }
+    else {
+      arvoreBStar(arquivo, tamanhoArquivo, &registroPesquisa);
+    }
 
     imprimeRegistro(registroPesquisa);
+
+    fclose(arquivo);
   }
   else {
     printf("ERRO: nao foi possivel abrir o arquivo\n");
-  }
-
-  if(arquivo != NULL) {
-    fclose(arquivo);
   }
   
   return 1;
