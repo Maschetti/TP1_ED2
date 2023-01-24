@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
       arvoreBinaria(arquivo, tamanhoArquivo, &registroPesquisa);
     }
     else if (metodo == 3) {
-      //arvoreB(arquivo, tamanhoArquivo, &registroPesquisa);
+      arvoreB(arquivo, tamanhoArquivo, &registroPesquisa);
     }
     else {
       arvoreBStar(arquivo, tamanhoArquivo, &registroPesquisa);
