@@ -7,11 +7,11 @@
 
 int main(int argc, char **argv) {
   FILE* arquivo;
-  if((arquivo = validation(argc, argv)) != NULL) {
-    int metodo = atoi(argv[1]);
+  int metodo = atoi(argv[1]);
     int tamanhoArquivo = atoi(argv[2]);
     Registro registroPesquisa;
     registroPesquisa.chave = atoi(argv[4]);
+  if((arquivo = validation(argc, argv)) != NULL) {
 
     if(metodo == 1) {
       acessoSequencialIndexado(arquivo, tamanhoArquivo, &registroPesquisa);
