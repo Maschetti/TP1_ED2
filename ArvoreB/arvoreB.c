@@ -141,7 +141,7 @@ void arvoreB(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
 
   item.chave = registroPesquisa->chave;
   
-  int achou;
+  int achou = 0;
   pesquisaArvoreB(paginaRaiz, &item, &achou);
   
   if(achou) {
