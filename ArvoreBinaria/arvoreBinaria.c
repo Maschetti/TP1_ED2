@@ -12,6 +12,21 @@ void imprimeArvore(int tamanhoArvore) {
   fclose(arvore);
 };
 
+void insereArvoreBinariaOrdenada(FILE *arvore, Indice indiceInsere, int posicaoFilho, int ordemArquivo, int fimArquivo) {
+  ArvoreExterna folha;
+  folha.indice = indiceInsere;
+  folha.filhoEsquerda = -1;
+  folha.filhoDireita = -1;
+  if(ordemArquivo == 1 && !fimArquivo) {
+    folha.filhoDireita = posicaoFilho;
+  }
+  else if(ordemArquivo == 2 && !fimArquivo) {
+    folha.filhoEsquerda = posicaoFilho;
+  }
+  fwrite(&folha, sizeof(ArvoreExterna), 1, arvore);
+  return ;
+}
+
 int insereArvoreBinaria(FILE *arvore, Indice indiceFilho) {
   
   ArvoreExterna indicePai;
@@ -96,7 +111,7 @@ void procuraArvoreBinaria(FILE *arvore, int chave, Indice *index, int *achou) {
   return ;
 };
 
-void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
+void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa, int ordemArquivo) {
   Registro registroAuxiliar;
   Indice index;
   FILE *arvore;
@@ -107,13 +122,16 @@ void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa
       fread(&registroAuxiliar, sizeof(Registro), 1, arquivo);
       index.chave = registroAuxiliar.chave;
       index.posicaoArquivo = i;
-      fseek(arvore, 0, SEEK_SET);
-
-      if(insereArvoreBinaria(arvore, index) == 0) {
-        return ;
+      if(ordemArquivo == 1 || ordemArquivo == 2) {
+        insereArvoreBinariaOrdenada(arvore, index, i + 1, ordemArquivo, i + 1 == tamanhoArquivo);
+      }
+      else {
+        if(insereArvoreBinaria(arvore, index) == 0)
+          return ;
+        else
+          fseek(arvore, 0, SEEK_SET);
       }
     }
-
     int achou = 0;
     fseek(arvore, 0, SEEK_SET);
     procuraArvoreBinaria(arvore, registroPesquisa->chave, &index, &achou);
