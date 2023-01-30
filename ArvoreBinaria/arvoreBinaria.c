@@ -27,61 +27,61 @@ void insereArvoreBinariaOrdenada(FILE *arvore, Indice indiceInsere, int posicaoF
   return ;
 }
 
-int insereArvoreBinaria(FILE *arvore, Indice indiceFilho) {
+int insereArvoreBinaria(FILE *arvore, Indice indiceInsere) {
+  ArvoreExterna folhaCaminhamento, folhaInsere, folhaPai;
+  folhaInsere.indice = indiceInsere;
+  folhaInsere.filhoEsquerda = -1;
+  folhaInsere.filhoDireita = -1;
+
+  int posicaoPai = 0;
+  int naoAchouPosicaoFilho = 1;
+  int arvoreVazia = (fread(&folhaCaminhamento, sizeof(ArvoreExterna), 1, arvore) == 0) ? 1 : 0;
+
+  if(arvoreVazia) {
+    fwrite(&folhaInsere, sizeof(ArvoreExterna), 1, arvore);
+    return 1;
+  }
+
+  while (naoAchouPosicaoFilho) {
+    fseek(arvore, posicaoPai * sizeof(ArvoreExterna), SEEK_SET);
+    fread(&folhaCaminhamento, sizeof(ArvoreExterna), 1, arvore);
+    folhaPai = folhaCaminhamento;
   
-  ArvoreExterna indicePai;
-  int ehArvoreVazia = fread(&indicePai, sizeof(ArvoreExterna), 1, arvore);
-
-  ArvoreExterna folha;
-  folha.indice = indiceFilho;
-  folha.filhoDireita = -1;
-  folha.filhoEsquerda = -1;
-
-
-  if(ehArvoreVazia == 0) {
-    fwrite(&folha, sizeof(ArvoreExterna), 1, arvore);
-    return 1;
+    if(folhaInsere.indice.chave < folhaCaminhamento.indice.chave) {
+      if(folhaCaminhamento.filhoEsquerda != -1) {
+        posicaoPai = folhaCaminhamento.filhoEsquerda;
+      }
+      else {
+        naoAchouPosicaoFilho = 0;
+      }
+    }
+    else if(folhaInsere.indice.chave > folhaCaminhamento.indice.chave) {
+      if(folhaCaminhamento.filhoDireita != -1) {
+        posicaoPai = folhaCaminhamento.filhoDireita;
+      }
+      else {
+        naoAchouPosicaoFilho = 0;
+      }
+    }
+    else {
+      return 0;
+    }
   }
 
-  if(indicePai.indice.chave == indiceFilho.chave) {
-    return 0;
-  }
-
-  int temFilhoEsquerda = (indicePai.filhoEsquerda != -1) ? 1 : 0;
-  int filhoMenorPai = (indiceFilho.chave < indicePai.indice.chave) ? 1 : 0;
-  int temFilhoDireita = (indicePai.filhoDireita != -1) ? 1 : 0;
-  int filhoMaiorPai = (indiceFilho.chave > indicePai.indice.chave) ? 1 : 0;
-
-  if(filhoMenorPai && temFilhoEsquerda) {
-    fseek(arvore, indicePai.filhoEsquerda * sizeof(ArvoreExterna), SEEK_SET);
-    insereArvoreBinaria(arvore, indiceFilho);
-    return 1;
-  }
-
-  
-  if(filhoMaiorPai && temFilhoDireita) {
-    fseek(arvore, indicePai.filhoDireita * sizeof(ArvoreExterna), SEEK_SET);
-    insereArvoreBinaria(arvore, indiceFilho);
-    return 1;
-  }
-
-  int posicaoPai = (ftell(arvore) / sizeof(ArvoreExterna)) -1;
   fseek(arvore, 0, SEEK_END);
-
-  if(filhoMenorPai) {
-    indicePai.filhoEsquerda = ftell(arvore) / sizeof(ArvoreExterna);
+  if(folhaInsere.indice.chave < folhaPai.indice.chave) {
+    folhaPai.filhoEsquerda = ftell(arvore) / sizeof(ArvoreExterna);
   }
   else {
-    indicePai.filhoDireita = ftell(arvore) / sizeof(ArvoreExterna);
+    folhaPai.filhoDireita = ftell(arvore) / sizeof(ArvoreExterna);
   }
 
-  fwrite(&folha, sizeof(ArvoreExterna), 1, arvore);
+  fwrite(&folhaInsere, sizeof(ArvoreExterna), 1, arvore);
 
   fseek(arvore, posicaoPai * sizeof(ArvoreExterna), SEEK_SET);
-  fwrite(&indicePai, sizeof(ArvoreExterna), 1, arvore);
-  
+  fwrite(&folhaPai, sizeof(ArvoreExterna), 1, arvore);
   return 1;
-};
+}
 
 void procuraArvoreBinaria(FILE *arvore, int chave, Indice *index, int *achou) {
   ArvoreExterna folha;
