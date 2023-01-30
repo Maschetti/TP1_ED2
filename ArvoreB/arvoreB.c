@@ -142,7 +142,7 @@ void arvoreB(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
   Apontador paginaRaiz = NULL;
   Registro auxiliar;
   Indice item;
-
+  iniciaAnalise(&analiseB);
   iniciaContagemTempo(&analiseB);
   for (int i = 0; i < tamanhoArquivo; i++) {
     fread(&auxiliar, sizeof(Registro), 1, arquivo);
@@ -169,6 +169,8 @@ void arvoreB(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
   }
   finalizaContagemTempo(&analiseB);
   atualizaTempo_pesquisa(&analiseB);
+
+  imprimirDados(&analiseB);
 
   return ;
 }

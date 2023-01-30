@@ -32,7 +32,6 @@ void insereArvoreBinariaOrdenada(FILE *arvore, Indice indiceInsere, int posicaoF
     folha.filhoEsquerda = posicaoFilho;
   }
   fwrite(&folha, sizeof(ArvoreExterna), 1, arvore);
-  atualizaTransferencias_criacao(&analiseBinaria,1);
   return;
 }
 
@@ -51,7 +50,6 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
   if (arvoreVazia)
   {
     fwrite(&folhaInsere, sizeof(ArvoreExterna), 1, arvore);
-    atualizaTransferencias_criacao(&analiseBinaria,1);
     return 1;
   }
 
@@ -111,12 +109,10 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
   }
 
   fwrite(&folhaInsere, sizeof(ArvoreExterna), 1, arvore);
-  atualizaTransferencias_criacao(&analiseBinaria,1);
 
   fseek(arvore, posicaoPai * sizeof(ArvoreExterna), SEEK_SET);
   atualizaDeslocamentos_criacao(&analiseBinaria,1);
   fwrite(&folhaPai, sizeof(ArvoreExterna), 1, arvore);
-  atualizaTransferencias_criacao(&analiseBinaria,1);
   return 1;
 }
 

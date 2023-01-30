@@ -247,5 +247,7 @@ void arvoreBStar(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) 
   finalizaContagemTempo(&analiseStar);
   atualizaTempo_pesquisa(&analiseStar);
 
+  imprimirDados(&analiseStar);
+  
   return ;
 }
