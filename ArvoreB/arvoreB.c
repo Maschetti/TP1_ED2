@@ -1,6 +1,10 @@
 #include "arvoreB.h"
+#include "../Analises/analise.h"
+
+Analise analiseB;
 
 void pesquisaArvoreB(Apontador paginaAtual, Indice *itemPesquisa, int *achou) {
+
   long i = 1;
   
   if(paginaAtual == NULL) {
@@ -9,6 +13,7 @@ void pesquisaArvoreB(Apontador paginaAtual, Indice *itemPesquisa, int *achou) {
 
   while (i < paginaAtual->numeroItems && itemPesquisa->chave > paginaAtual->items[i - 1].chave) i++;
 
+  atualizaComparacoes_pesquisa(&analiseB,1);
   if(itemPesquisa->chave == paginaAtual->items[i - 1].chave) {
     *itemPesquisa = paginaAtual->items[i - 1];
     *achou = 1;
@@ -31,6 +36,7 @@ void insereNaPagina(Apontador paginaAtual, Indice item, Apontador paginaDireita)
   naoAchouPosicao = (k > 0) ? 1 : 0;
 
   while (naoAchouPosicao) {
+    atualizaComparacoes_criacao(&analiseB, 1);
     if(item.chave >= paginaAtual->items[k - 1].chave) {
       naoAchouPosicao = 0;
       break;
@@ -62,8 +68,12 @@ void insereIndice(Apontador paginaAtual, Indice item, int *cresceu, Indice *indi
     return ;
   }
 
-  while(i < paginaAtual->numeroItems && item.chave > paginaAtual->items[i - 1].chave) i++;
+  while(i < paginaAtual->numeroItems && item.chave > paginaAtual->items[i - 1].chave) {
+    atualizaComparacoes_criacao(&analiseB, 1);
+    i++;
+  }
 
+  atualizaComparacoes_criacao(&analiseB, 2);
   if(item.chave == paginaAtual->items[i - 1].chave) {
     *cresceu = 0;
     printf("ERRO: o item ja esta presente na arvore\n");
@@ -71,6 +81,7 @@ void insereIndice(Apontador paginaAtual, Indice item, int *cresceu, Indice *indi
     return ;
   }
 
+  atualizaComparacoes_criacao(&analiseB, 1);
   if(item.chave < paginaAtual->items[i - 1].chave) i--;
 
   insereIndice(paginaAtual->paginasFilhas[i], item, cresceu, indiceRetorno, paginaRetorno);
@@ -132,22 +143,32 @@ void arvoreB(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) {
   Registro auxiliar;
   Indice item;
 
+  iniciaContagemTempo(&analiseB);
   for (int i = 0; i < tamanhoArquivo; i++) {
     fread(&auxiliar, sizeof(Registro), 1, arquivo);
+    atualizaTransferencias_criacao(&analiseB,1);
     item.chave = auxiliar.chave;
     item.posicaoArquivo = i;
     insereNaArvoreB(&paginaRaiz, item);
   }
+  finalizaContagemTempo(&analiseB);
+  atualizaTempo_criacao(&analiseB);
 
   item.chave = registroPesquisa->chave;
   
   int achou = 0;
+
+  iniciaContagemTempo(&analiseB);
   pesquisaArvoreB(paginaRaiz, &item, &achou);
   
   if(achou) {
     fseek(arquivo, item.posicaoArquivo * sizeof(Registro), SEEK_SET);
+    atualizaDeslocamentos_pesquisa(&analiseB,1);
     fread(registroPesquisa, sizeof(Registro), 1, arquivo);
+    atualizaTransferencias_pesquisa(&analiseB,1);
   }
+  finalizaContagemTempo(&analiseB);
+  atualizaTempo_pesquisa(&analiseB);
 
   return ;
 }
