@@ -7,16 +7,17 @@
 
 int main(int argc, char **argv) {
   FILE* arquivo;
+  int metodo = atoi(argv[1]);
+  int tamanhoArquivo = atoi(argv[2]);
+  int ordemArquivo = atoi(argv[3]);
+  Registro registroPesquisa;
+  registroPesquisa.chave = atoi(argv[4]);
   if((arquivo = validation(argc, argv)) != NULL) {
-    int metodo = atoi(argv[1]);
-    int tamanhoArquivo = atoi(argv[2]);
-    Registro registroPesquisa;
-    registroPesquisa.chave = atoi(argv[4]);
 
     if(metodo == 1) {
       acessoSequencialIndexado(arquivo, tamanhoArquivo, &registroPesquisa);
     } else if(metodo == 2) {
-      arvoreBinaria(arquivo, tamanhoArquivo, &registroPesquisa);
+      arvoreBinaria(arquivo, tamanhoArquivo, &registroPesquisa, ordemArquivo);
     }
     else if (metodo == 3) {
       arvoreB(arquivo, tamanhoArquivo, &registroPesquisa);

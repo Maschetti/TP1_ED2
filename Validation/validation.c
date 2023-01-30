@@ -18,7 +18,7 @@ FILE* validation(int numberArguments, char **arguments) {
   // printf("number of arguments = %d\n", numberArguments);
   // printf("arguments = %s\n", arguments[1]);
   FILE* arquivo = NULL;
-  int metodo, quantidade, situacao, chave, P, valido = 1;
+  int metodo, quantidade, situacao, chave, P = 0, valido = 1;
 
   if(numberArguments >= 5 && numberArguments < 7) {
     argumentsToInt(numberArguments, arguments, &metodo, &quantidade, &situacao, &chave, &P);
