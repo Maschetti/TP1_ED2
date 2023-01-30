@@ -10,6 +10,6 @@ typedef struct {
   int filhoDireita;
 } ArvoreExterna;
 
-void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa);
+void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa, int ordemArquivo);
 
 #endif
