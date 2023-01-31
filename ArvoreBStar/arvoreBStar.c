@@ -8,6 +8,7 @@ void pesquisaArvoreBStar(ApontadorStar *paginaAtual, Indice *indicePesquisa, int
   ApontadorStar paginaAuxiliar;
   paginaAuxiliar = *paginaAtual;
 
+  //faz o caminhamento pelas paginas internas
   if((*paginaAtual)->tipoDaPagina == INTERNA) {
     i = 1;
     while (i < paginaAuxiliar->UU.interna.numeroChaves && indicePesquisa->chave > paginaAuxiliar->UU.interna.chaves[i - 1]){
@@ -45,6 +46,7 @@ void insereNaInterna(ApontadorStar paginaAtual, int chave, ApontadorStar paginaD
   int k = paginaAtual->UU.interna.numeroChaves;
   int naoAchouPosicao = (k > 0);
 
+  //acha a posicao para colocar a chave
   while (naoAchouPosicao) {
     atualizaComparacoes_criacao(&analiseStar,1);
     if(chave >= paginaAtual->UU.interna.chaves[k - 1]) {
@@ -70,6 +72,7 @@ void insereNaExterna(ApontadorStar paginaAtual, Indice indice) {
   int k = paginaAtual->UU.externa.numeroIndices;
   int naoAchouPosicao = (k > 0);
 
+  //acha a posicao para colocar indice
   while (naoAchouPosicao) {
     atualizaComparacoes_criacao(&analiseStar,1);
     if(indice.chave >= paginaAtual->UU.externa.indices[k - 1].chave) {
@@ -93,6 +96,7 @@ void insereIndiceStar(ApontadorStar paginaAtual, Indice indiceInserir, int *cres
   int i = 1, j;
   ApontadorStar paginaAuxiliar;
 
+  //quando a arvore crescer pra cima
   if(paginaAtual == NULL) {
     *cresceu = 1;
     (*indiceRetorno) = indiceInserir;
@@ -112,6 +116,7 @@ void insereIndiceStar(ApontadorStar paginaAtual, Indice indiceInserir, int *cres
 
     insereIndiceStar(paginaAtual->UU.interna.paginasFilhas[i], indiceInserir, cresceu, indiceRetorno, paginaRetorno);
 
+    //caso tenha achado a pagina
     if(!*cresceu) return ;
 
     if(paginaAtual->UU.interna.numeroChaves < 2 * M) {
@@ -158,6 +163,7 @@ void insereIndiceStar(ApontadorStar paginaAtual, Indice indiceInserir, int *cres
       return ;
     }
 
+    //caso tenha achado a pagina
     if(!*cresceu) return ;
 
     if(paginaAtual->UU.externa.numeroIndices < 2 * M) {
@@ -197,6 +203,7 @@ void insereNaArvoreBStar(ApontadorStar *paginaRaiz, Indice indiceInserir) {
   Indice indiceRetorno;
   PaginaStar *paginaRetorno, *paginaAuxiliar;
 
+  //caso a arvore esteja vazia
   if(*paginaRaiz == NULL) {
     paginaAuxiliar = (PaginaStar*) malloc(sizeof(PaginaStar));
     paginaAuxiliar->tipoDaPagina = EXTERNA;
@@ -206,6 +213,7 @@ void insereNaArvoreBStar(ApontadorStar *paginaRaiz, Indice indiceInserir) {
 
   insereIndiceStar(*paginaRaiz, indiceInserir, &cresceu, &indiceRetorno, &paginaRetorno);
 
+  //quando a altura da arvore aumentar
   if(cresceu) {
     paginaAuxiliar = (PaginaStar *) malloc(sizeof(PaginaStar));
     paginaAuxiliar->tipoDaPagina = INTERNA;
@@ -222,9 +230,12 @@ void arvoreBStar(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) 
   Registro registroAuxiliar;
   Indice indice;
 
+
+  //le registros e insere na arvore
   iniciaAnalise(&analiseStar);
 
   iniciaContagemTempo(&analiseStar);
+
   for (int i = 0; i < tamanhoArquivo; i++) {
     fread(&registroAuxiliar, sizeof(Registro), 1, arquivo);
     atualizaTransferencias_criacao(&analiseStar,1);
