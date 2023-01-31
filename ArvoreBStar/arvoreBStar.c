@@ -5,6 +5,7 @@ void pesquisaArvoreBStar(ApontadorStar *paginaAtual, Indice *indicePesquisa, int
   ApontadorStar paginaAuxiliar;
   paginaAuxiliar = *paginaAtual;
 
+  //faz o caminhamento pelas paginas internas
   if((*paginaAtual)->tipoDaPagina == INTERNA) {
     i = 1;
     while (i < paginaAuxiliar->UU.interna.numeroChaves && indicePesquisa->chave > paginaAuxiliar->UU.interna.chaves[i - 1]) i++;
