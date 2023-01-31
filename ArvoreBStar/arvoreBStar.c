@@ -1,4 +1,7 @@
 #include "arvoreBStar.h"
+#include "../Analises/analise.h"
+
+Analise analiseStar;
 
 void pesquisaArvoreBStar(ApontadorStar *paginaAtual, Indice *indicePesquisa, int *achou) {
   int i;
@@ -8,8 +11,12 @@ void pesquisaArvoreBStar(ApontadorStar *paginaAtual, Indice *indicePesquisa, int
   //faz o caminhamento pelas paginas internas
   if((*paginaAtual)->tipoDaPagina == INTERNA) {
     i = 1;
-    while (i < paginaAuxiliar->UU.interna.numeroChaves && indicePesquisa->chave > paginaAuxiliar->UU.interna.chaves[i - 1]) i++;
+    while (i < paginaAuxiliar->UU.interna.numeroChaves && indicePesquisa->chave > paginaAuxiliar->UU.interna.chaves[i - 1]){
+      atualizaComparacoes_pesquisa(&analiseStar,1);
+      i++;
+    }
     
+    atualizaComparacoes_pesquisa(&analiseStar,2);
     if(indicePesquisa->chave <= paginaAuxiliar->UU.interna.chaves[i - 1]) {
       pesquisaArvoreBStar(&paginaAuxiliar->UU.interna.paginasFilhas[i - 1], indicePesquisa, achou);
     }
@@ -21,8 +28,12 @@ void pesquisaArvoreBStar(ApontadorStar *paginaAtual, Indice *indicePesquisa, int
   }
  
   i = 1;
-  while (i <= paginaAuxiliar->UU.externa.numeroIndices && indicePesquisa->chave >  paginaAuxiliar->UU.externa.indices[i - 1].chave) i++;
+  while (i <= paginaAuxiliar->UU.externa.numeroIndices && indicePesquisa->chave >  paginaAuxiliar->UU.externa.indices[i - 1].chave) {
+    i++;
+    atualizaComparacoes_pesquisa(&analiseStar, 1);
+  }
   
+  atualizaComparacoes_pesquisa(&analiseStar,2);
   if(indicePesquisa->chave == paginaAuxiliar->UU.externa.indices[i - 1].chave) {
     *indicePesquisa = paginaAuxiliar->UU.externa.indices[i - 1];
     *achou = 1;
@@ -37,6 +48,7 @@ void insereNaInterna(ApontadorStar paginaAtual, int chave, ApontadorStar paginaD
 
   //acha a posicao para colocar a chave
   while (naoAchouPosicao) {
+    atualizaComparacoes_criacao(&analiseStar,1);
     if(chave >= paginaAtual->UU.interna.chaves[k - 1]) {
       naoAchouPosicao = 0;
       break;
@@ -62,6 +74,7 @@ void insereNaExterna(ApontadorStar paginaAtual, Indice indice) {
 
   //acha a posicao para colocar indice
   while (naoAchouPosicao) {
+    atualizaComparacoes_criacao(&analiseStar,1);
     if(indice.chave >= paginaAtual->UU.externa.indices[k - 1].chave) {
       naoAchouPosicao = 0;
       break;
@@ -76,7 +89,7 @@ void insereNaExterna(ApontadorStar paginaAtual, Indice indice) {
   }
 
   paginaAtual->UU.externa.indices[k] = indice;
-    paginaAtual->UU.externa.numeroIndices++;
+  paginaAtual->UU.externa.numeroIndices++;
 }
 
 void insereIndiceStar(ApontadorStar paginaAtual, Indice indiceInserir, int *cresceu, Indice *indiceRetorno, ApontadorStar *paginaRetorno) {
@@ -93,8 +106,12 @@ void insereIndiceStar(ApontadorStar paginaAtual, Indice indiceInserir, int *cres
   }
 
   if(paginaAtual->tipoDaPagina == INTERNA) {
-    while(i < paginaAtual->UU.interna.numeroChaves && indiceInserir.chave > paginaAtual->UU.interna.chaves[i - 1]) i++;
+    while(i < paginaAtual->UU.interna.numeroChaves && indiceInserir.chave > paginaAtual->UU.interna.chaves[i - 1]) {
+      i++;
+      atualizaComparacoes_criacao(&analiseStar,1);
+    }
 
+    atualizaComparacoes_criacao(&analiseStar,2);
     if(indiceInserir.chave < paginaAtual->UU.interna.chaves[i - 1]) i--;
 
     insereIndiceStar(paginaAtual->UU.interna.paginasFilhas[i], indiceInserir, cresceu, indiceRetorno, paginaRetorno);
@@ -135,8 +152,12 @@ void insereIndiceStar(ApontadorStar paginaAtual, Indice indiceInserir, int *cres
   else {
     (*indiceRetorno) = indiceInserir;
 
-    while (i < paginaAtual->UU.externa.numeroIndices && indiceInserir.chave > paginaAtual->UU.externa.indices[i - 1].chave) i++;
+    while (i < paginaAtual->UU.externa.numeroIndices && indiceInserir.chave > paginaAtual->UU.externa.indices[i - 1].chave){
+      i++;
+      atualizaComparacoes_criacao(&analiseStar,1);
+    }
 
+    atualizaComparacoes_criacao(&analiseStar,2);
     if(indiceInserir.chave == paginaAtual->UU.externa.indices[i - 1].chave && paginaAtual->UU.externa.numeroIndices != 0) {
       *cresceu = 0;
       return ;
@@ -209,13 +230,23 @@ void arvoreBStar(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) 
   Registro registroAuxiliar;
   Indice indice;
 
+
   //le registros e insere na arvore
+  iniciaAnalise(&analiseStar);
+
+  iniciaContagemTempo(&analiseStar);
+
   for (int i = 0; i < tamanhoArquivo; i++) {
     fread(&registroAuxiliar, sizeof(Registro), 1, arquivo);
+    atualizaTransferencias_criacao(&analiseStar,1);
     indice.chave = registroAuxiliar.chave;
     indice.posicaoArquivo = i;
     insereNaArvoreBStar(&paginaRaiz, indice);
   }
+  finalizaContagemTempo(&analiseStar);
+  atualizaTempo_criacao(&analiseStar);
+
+  iniciaContagemTempo(&analiseStar);
 
   indice.chave = registroPesquisa->chave;
 
@@ -224,8 +255,14 @@ void arvoreBStar(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) 
 
   if(achou) {
     fseek(arquivo, indice.posicaoArquivo * sizeof(Registro), SEEK_SET);
+    atualizaDeslocamentos_pesquisa(&analiseStar,1);
     fread(registroPesquisa, sizeof(Registro), 1, arquivo);
+    atualizaTransferencias_pesquisa(&analiseStar,1);
   }
+  finalizaContagemTempo(&analiseStar);
+  atualizaTempo_pesquisa(&analiseStar);
 
+  imprimirDados(&analiseStar);
+  
   return ;
 }
