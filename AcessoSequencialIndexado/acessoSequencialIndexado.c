@@ -11,6 +11,8 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   long desloc;
   iniciaContagemTempo(&analiseIndexado);
   i = 0;
+
+  //Procura a página do item desejado
   while (i < tamanhoTabela && tabela[i] <= registroPesquisa->chave) {
     i++;
     atualizaComparacoes_pesquisa(&analiseIndexado, 1);
@@ -18,20 +20,22 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   atualizaComparacoes_pesquisa(&analiseIndexado, 1);
 
   if(i == 0) return ;
+
+  //Verifica a quantidade de itens na página
   if(i < tamanhoTabela) quantidadeItems = TAMANHOPAGINA;
   else {
-    fseek(arquivo, 0, SEEK_END);
-    atualizaDeslocamentos_pesquisa(&analiseIndexado, 1);
     quantidadeItems = tamanhoArquivo % TAMANHOPAGINA;
     if(quantidadeItems == 0) quantidadeItems = TAMANHOPAGINA;
   }
 
+  //Carregando a página para a memória principal
   desloc = (i - 1) * TAMANHOPAGINA * sizeof(Registro);
   fseek(arquivo, desloc, SEEK_SET);
   atualizaDeslocamentos_pesquisa(&analiseIndexado, 1);
   fread(&pagina, sizeof(Registro), quantidadeItems, arquivo);
   atualizaTransferencias_pesquisa(&analiseIndexado, 1);
 
+  //Varredura na página para encontrar o item
   for(i = 0; i < quantidadeItems; i++) {
     atualizaComparacoes_pesquisa(&analiseIndexado, 1);
     if(pagina[i].chave == registroPesquisa->chave) {
@@ -50,10 +54,13 @@ void acessoSequencialIndexado(FILE *arquivo, int tamanhoArquivo, Registro *regis
   if(tamanhoTabela < ((double) tamanhoArquivo / (double) TAMANHOPAGINA)) {
     tamanhoTabela++;
   }
+
   int *tabela = malloc(sizeof(int) * (tamanhoTabela));
 
   int posicao = 0;
   Registro registro;
+
+  //Leitura e armazenamento do menor item da página
   while (posicao < tamanhoTabela) {
     fread(&registro, sizeof(registro), 1, arquivo);
     atualizaTransferencias_criacao(&analiseIndexado, 1);
