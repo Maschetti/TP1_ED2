@@ -13,9 +13,9 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
   i = 0;
   while (i < tamanhoTabela && tabela[i] <= registroPesquisa->chave) {
     i++;
-    atualizaComparacoes_criacao(&analiseIndexado, 1);
+    atualizaComparacoes_pesquisa(&analiseIndexado, 1);
   }
-  atualizaComparacoes_criacao(&analiseIndexado, 1);
+  atualizaComparacoes_pesquisa(&analiseIndexado, 1);
 
   if(i == 0) return ;
   if(i < tamanhoTabela) quantidadeItems = TAMANHOPAGINA;
@@ -39,8 +39,6 @@ void pesquisa(FILE *arquivo, int *tabela, int tamanhoTabela, Registro *registroP
       break;
     }
   }
-  finalizaContagemTempo(&analiseIndexado);
-  atualizaTempo_pesquisa(&analiseIndexado);
 
   return ;
 }

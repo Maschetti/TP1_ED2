@@ -27,9 +27,12 @@ void pesquisaArvoreBStar(ApontadorStar *paginaAtual, Indice *indicePesquisa, int
   }
  
   i = 1;
-  while (i <= paginaAuxiliar->UU.externa.numeroIndices && indicePesquisa->chave >  paginaAuxiliar->UU.externa.indices[i - 1].chave) i++;
+  while (i <= paginaAuxiliar->UU.externa.numeroIndices && indicePesquisa->chave >  paginaAuxiliar->UU.externa.indices[i - 1].chave) {
+    i++;
+    atualizaComparacoes_pesquisa(&analiseStar, 1);
+  }
   
-  atualizaComparacoes_pesquisa(&analiseStar,1);
+  atualizaComparacoes_pesquisa(&analiseStar,2);
   if(indicePesquisa->chave == paginaAuxiliar->UU.externa.indices[i - 1].chave) {
     *indicePesquisa = paginaAuxiliar->UU.externa.indices[i - 1];
     *achou = 1;
@@ -102,7 +105,7 @@ void insereIndiceStar(ApontadorStar paginaAtual, Indice indiceInserir, int *cres
     while(i < paginaAtual->UU.interna.numeroChaves && indiceInserir.chave > paginaAtual->UU.interna.chaves[i - 1]) {
       i++;
       atualizaComparacoes_criacao(&analiseStar,1);
-      }
+    }
 
     atualizaComparacoes_criacao(&analiseStar,2);
     if(indiceInserir.chave < paginaAtual->UU.interna.chaves[i - 1]) i--;
@@ -231,11 +234,12 @@ void arvoreBStar(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa) 
   }
   finalizaContagemTempo(&analiseStar);
   atualizaTempo_criacao(&analiseStar);
+
+  iniciaContagemTempo(&analiseStar);
+
   indice.chave = registroPesquisa->chave;
 
   int achou = 0;
-
-  iniciaContagemTempo(&analiseStar);
   pesquisaArvoreBStar(&paginaRaiz, &indice, &achou);
 
   if(achou) {

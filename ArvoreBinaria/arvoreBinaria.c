@@ -32,7 +32,8 @@ void insereArvoreBinariaOrdenada(FILE *arvore, Indice indiceInsere, int posicaoF
     folha.filhoEsquerda = posicaoFilho;
   }
   fwrite(&folha, sizeof(ArvoreExterna), 1, arvore);
-  return;
+  atualizaAcessoDisco_criacao(&analiseBinaria, 1);
+  return ;
 }
 
 int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
@@ -50,6 +51,7 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
   if (arvoreVazia)
   {
     fwrite(&folhaInsere, sizeof(ArvoreExterna), 1, arvore);
+    atualizaAcessoDisco_criacao(&analiseBinaria, 1);
     return 1;
   }
 
@@ -76,7 +78,7 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
     }
     else
     {
-      atualizaComparacoes_pesquisa(&analiseBinaria,1);
+      atualizaComparacoes_criacao(&analiseBinaria,1);
       if (folhaInsere.indice.chave > folhaCaminhamento.indice.chave)
       {
         if (folhaCaminhamento.filhoDireita != -1)
@@ -109,10 +111,12 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
   }
 
   fwrite(&folhaInsere, sizeof(ArvoreExterna), 1, arvore);
+  atualizaAcessoDisco_criacao(&analiseBinaria,1);
 
   fseek(arvore, posicaoPai * sizeof(ArvoreExterna), SEEK_SET);
   atualizaDeslocamentos_criacao(&analiseBinaria,1);
   fwrite(&folhaPai, sizeof(ArvoreExterna), 1, arvore);
+  atualizaAcessoDisco_criacao(&analiseBinaria,1);
   return 1;
 }
 
@@ -178,18 +182,20 @@ void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa
       {
         if (insereArvoreBinaria(arvore, index) == 0)
           return;
-        else
+        else {
           fseek(arvore, 0, SEEK_SET);
+          atualizaTransferencias_criacao(&analiseBinaria, 1);
+        }
       }
     }
     int achou = 0;
-    fseek(arvore, 0, SEEK_SET);
-    atualizaDeslocamentos_criacao(&analiseBinaria, 1);
 
     finalizaContagemTempo(&analiseBinaria);
     atualizaTempo_criacao(&analiseBinaria);
 
     iniciaContagemTempo(&analiseBinaria);
+    fseek(arvore, 0, SEEK_SET);
+    atualizaDeslocamentos_pesquisa(&analiseBinaria, 1);
     procuraArvoreBinaria(arvore, registroPesquisa->chave, &index, 0, &achou);
 
     if (achou == 1)

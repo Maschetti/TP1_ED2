@@ -11,15 +11,19 @@ void pesquisaArvoreB(Apontador paginaAtual, Indice *itemPesquisa, int *achou) {
     return ;
   }
 
-  while (i < paginaAtual->numeroItems && itemPesquisa->chave > paginaAtual->items[i - 1].chave) i++;
+  while (i < paginaAtual->numeroItems && itemPesquisa->chave > paginaAtual->items[i - 1].chave) {
+    i++;
+    atualizaComparacoes_pesquisa(&analiseB, 1);
+  }
 
-  atualizaComparacoes_pesquisa(&analiseB,1);
+  atualizaComparacoes_pesquisa(&analiseB,2);
   if(itemPesquisa->chave == paginaAtual->items[i - 1].chave) {
     *itemPesquisa = paginaAtual->items[i - 1];
     *achou = 1;
     return  ;
   }
 
+  atualizaComparacoes_pesquisa(&analiseB, 1);
   if(itemPesquisa->chave < paginaAtual->items[i - 1].chave) {
     pesquisaArvoreB(paginaAtual->paginasFilhas[i - 1], itemPesquisa, achou);
   }
