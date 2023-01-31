@@ -23,6 +23,8 @@ void insereArvoreBinariaOrdenada(FILE *arvore, Indice indiceInsere, int posicaoF
   folha.indice = indiceInsere;
   folha.filhoEsquerda = -1;
   folha.filhoDireita = -1;
+
+  //verifica se é ordenado ascendente ou descendente para ir adionando ou direita ou pela esquerda
   if (ordemArquivo == 1 && !fimArquivo)
   {
     folha.filhoDireita = posicaoFilho;
@@ -48,13 +50,15 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
   int arvoreVazia = (fread(&folhaCaminhamento, sizeof(ArvoreExterna), 1, arvore) == 0) ? 1 : 0;
   atualizaTransferencias_criacao(&analiseBinaria,1);
 
-  if (arvoreVazia)
+  //verifica a situação da árvore para caso vazia inserir o primeiro, ou caso contrário proucurar onde inserir
+  if (arvoreVazia) 
   {
     fwrite(&folhaInsere, sizeof(ArvoreExterna), 1, arvore);
     atualizaAcessoDisco_criacao(&analiseBinaria, 1);
     return 1;
   }
 
+  //analise caminhando pela arvore para achar onde o está o pai do novo item inserido 
   while (naoAchouPosicaoFilho)
   {
     fseek(arvore, posicaoPai * sizeof(ArvoreExterna), SEEK_SET);
@@ -67,7 +71,7 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
     atualizaComparacoes_criacao(&analiseBinaria, 1);
     if (folhaInsere.indice.chave < folhaCaminhamento.indice.chave)
     {
-      if (folhaCaminhamento.filhoEsquerda != -1)
+      if (folhaCaminhamento.filhoEsquerda != -1) //enquanto aida houver filho, continua o encaminhamento
       {
         posicaoPai = folhaCaminhamento.filhoEsquerda;
       }
@@ -81,7 +85,7 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
       atualizaComparacoes_criacao(&analiseBinaria,1);
       if (folhaInsere.indice.chave > folhaCaminhamento.indice.chave)
       {
-        if (folhaCaminhamento.filhoDireita != -1)
+        if (folhaCaminhamento.filhoDireita != -1) //enquanto aida houver filho, continua o encaminhamento
         {
           posicaoPai = folhaCaminhamento.filhoDireita;
         }
@@ -100,6 +104,7 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
   fseek(arvore, 0, SEEK_END);
   atualizaDeslocamentos_criacao(&analiseBinaria,1);
 
+  //salvar posição do novo filho inserido
   atualizaComparacoes_criacao(&analiseBinaria,1);
   if (folhaInsere.indice.chave < folhaPai.indice.chave)
   {
@@ -110,6 +115,7 @@ int insereArvoreBinaria(FILE *arvore, Indice indiceInsere)
     folhaPai.filhoDireita = ftell(arvore) / sizeof(ArvoreExterna);
   }
 
+  //atualizar as novas informações de quem foi inserido no arquivo
   fwrite(&folhaInsere, sizeof(ArvoreExterna), 1, arvore);
   atualizaAcessoDisco_criacao(&analiseBinaria,1);
 
@@ -129,27 +135,28 @@ void procuraArvoreBinaria(FILE *arvore, int chave, Indice *index, int posicao, i
   fread(&folha, sizeof(ArvoreExterna), 1, arvore);
   atualizaTransferencias_pesquisa(&analiseBinaria,1);
 
+  //verifica se o pai possui filhos e se a chave é maior ou menor que o pai
   int temFilhoEsquerda = (folha.filhoEsquerda != -1) ? 1 : 0;
   int chaveMenorPai = (chave < folha.indice.chave) ? 1 : 0;
   int temFilhoDireita = (folha.filhoDireita != -1) ? 1 : 0;
   int chaveMaiorPai = (chave > folha.indice.chave) ? 1 : 0;
 
   atualizaComparacoes_pesquisa(&analiseBinaria,5);
-  if (folha.indice.chave == chave)
+  if (folha.indice.chave == chave) //se o indice for igual é pq a folha que estamos é a que procuramos
   {
     *index = folha.indice;
     *achou = 1;
     return;
   }
 
-  if (chaveMenorPai && temFilhoEsquerda)
+  if (chaveMenorPai && temFilhoEsquerda) //se for menor e tiver filho proucuramos novamente pela esquerda
   {
     procuraArvoreBinaria(arvore, chave, index, folha.filhoEsquerda, achou);
   }
 
-  if (chaveMaiorPai && temFilhoDireita)
+  if (chaveMaiorPai && temFilhoDireita) //se for maior e tiver filho proucuramos novamente pela direita
   {
-    procuraArvoreBinaria(arvore, chave, index, folha.filhoDireita, achou);
+    procuraArvoreBinaria(arvore, chave, index, folha.filhoDireita, achou); 
   }
 
   return;
@@ -163,9 +170,11 @@ void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa
   iniciaAnalise(&analiseBinaria);
 
   iniciaContagemTempo(&analiseBinaria);
+  //criação ou abertura do arquivo para armazenar a árvore
   if ((arvore = fopen("arvoreBinaria.bin", "w+b")) != NULL)
   {
 
+    //percorrer o arquivo para leitura dos registros
     for (int i = 0; i < tamanhoArquivo; i++)
     {
 
@@ -174,6 +183,8 @@ void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa
 
       index.chave = registroAuxiliar.chave;
       index.posicaoArquivo = i;
+
+      //verificação da ordenação do arquivo para melhorar a inserção com base nos 3 tipos de ornação
       if (ordemArquivo == 1 || ordemArquivo == 2)
       {
         insereArvoreBinariaOrdenada(arvore, index, i + 1, ordemArquivo, i + 1 == tamanhoArquivo);
@@ -196,6 +207,8 @@ void arvoreBinaria(FILE *arquivo, int tamanhoArquivo, Registro *registroPesquisa
     iniciaContagemTempo(&analiseBinaria);
     fseek(arvore, 0, SEEK_SET);
     atualizaDeslocamentos_pesquisa(&analiseBinaria, 1);
+
+    //proucura pela chave e sua posição, se achar vai até ela no arquivo e lê seu registro por completo
     procuraArvoreBinaria(arvore, registroPesquisa->chave, &index, 0, &achou);
 
     if (achou == 1)
