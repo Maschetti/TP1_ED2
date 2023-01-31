@@ -9,6 +9,7 @@ typedef struct{
   int tranferencias_criacao, tranferencias_pesquisa;
   int deslocamentos_criacao, deslocamentos_pesquisa;
   int comparacoes_criacao, comparacoes_pesquisa;
+  int acessoDisco_criacao, acessoDisco_pesquisa;
   double tempo_pesquisa, tempo_criacao;
 
   clock_t iniTempo, fimTempo;
@@ -36,6 +37,10 @@ void atualizaComparacoes_pesquisa(Analise *analise, int qtd);
 //funcoes para numero de deslocamentos
 void atualizaDeslocamentos_criacao(Analise *analise, int qtd);
 void atualizaDeslocamentos_pesquisa(Analise *analise, int qtd);
+
+//funcoes para numero de acesso a disco
+void atualizaAcessoDisco_criacao(Analise *analise, int qtd);
+void atualizaAcessoDisco_pesquisa(Analise *analise, int qtd);
 
 //funcoes para atualizacao do tempo de contagem
 void atualizaTempo_criacao(Analise *analise);
